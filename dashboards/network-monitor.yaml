@@ -71,7 +71,7 @@ views:
             tap_action:
               action: call-service
               service: homeassistant.update_entity
-              service_data:
+              data:
                 entity_id:
                   - sensor.speedtest_download
                   - sensor.speedtest_upload
@@ -100,7 +100,7 @@ views:
               title: WAN Throughput (30m)
               show_states: true
             graph_span: 30m
-            update_interval: 5s
+            update_interval: 5
             series:
               - entity: sensor.wan1_down_mbps
                 name: WAN1 Down
