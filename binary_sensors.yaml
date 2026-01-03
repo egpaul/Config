@@ -1,0 +1,6 @@
+# ===== Internet Reachability =====
+- platform: ping
+  name: "Internet Reachable (1.1.1.1)"
+  host: 1.1.1.1
+  count: 2
+  scan_interval: 10

@@ -1,0 +1,29 @@
+# ===== WAN Status Binary Sensors =====
+- binary_sensor:
+    - name: "WAN1 Up"
+      state: "{{ states('sensor.wan1_oper_status')|int == 1 }}"
+
+    - name: "WAN2 Up"
+      state: "{{ states('sensor.wan2_oper_status')|int == 1 }}"
+
+    - name: "Failover Active"
+      state: >
+        {{ is_state('binary_sensor.wan1_up','off') and is_state('binary_sensor.wan2_up','on') }}
+
+# ===== WAN Bandwidth Sensors (Mbps) =====
+- sensor:
+    - name: "WAN1 Down Mbps"
+      unit_of_measurement: "Mbps"
+      state: "{{ (states('sensor.wan1_in_bps')|float(0) * 8 / 1000000) | round(2) }}"
+
+    - name: "WAN1 Up Mbps"
+      unit_of_measurement: "Mbps"
+      state: "{{ (states('sensor.wan1_out_bps')|float(0) * 8 / 1000000) | round(2) }}"
+
+    - name: "WAN2 Down Mbps"
+      unit_of_measurement: "Mbps"
+      state: "{{ (states('sensor.wan2_in_bps')|float(0) * 8 / 1000000) | round(2) }}"
+
+    - name: "WAN2 Up Mbps"
+      unit_of_measurement: "Mbps"
+      state: "{{ (states('sensor.wan2_out_bps')|float(0) * 8 / 1000000) | round(2) }}"

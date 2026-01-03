@@ -1,0 +1,90 @@
+# ===== WAN1 (eth10, ifIndex 4) =====
+- platform: snmp
+  name: "WAN1 In Octets"
+  host: 192.168.0.1
+  community: public
+  version: 2c
+  baseoid: 1.3.6.1.2.1.31.1.1.1.6.4     # ifHCInOctets.4
+  scan_interval: 5
+
+- platform: snmp
+  name: "WAN1 Out Octets"
+  host: 192.168.0.1
+  community: public
+  version: 2c
+  baseoid: 1.3.6.1.2.1.31.1.1.1.10.4    # ifHCOutOctets.4
+  scan_interval: 5
+
+- platform: snmp
+  name: "WAN1 Oper Status"
+  host: 192.168.0.1
+  community: public
+  version: 2c
+  baseoid: 1.3.6.1.2.1.2.2.1.8.4        # ifOperStatus.4
+  scan_interval: 10
+
+# ===== WAN2 (eth9, ifIndex 3) =====
+- platform: snmp
+  name: "WAN2 In Octets"
+  host: 192.168.0.1
+  community: public
+  version: 2c
+  baseoid: 1.3.6.1.2.1.31.1.1.1.6.3     # ifHCInOctets.3
+  scan_interval: 5
+
+- platform: snmp
+  name: "WAN2 Out Octets"
+  host: 192.168.0.1
+  community: public
+  version: 2c
+  baseoid: 1.3.6.1.2.1.31.1.1.1.10.3    # ifHCOutOctets.3
+  scan_interval: 5
+
+- platform: snmp
+  name: "WAN2 Oper Status"
+  host: 192.168.0.1
+  community: public
+  version: 2c
+  baseoid: 1.3.6.1.2.1.2.2.1.8.3        # ifOperStatus.3
+  scan_interval: 10
+
+# ===== Derivatives (Octets -> Bytes/sec) =====
+- platform: derivative
+  name: "WAN1 In Bps"
+  source: sensor.wan1_in_octets
+  unit_time: s
+  time_window: "00:01:00"
+
+- platform: derivative
+  name: "WAN1 Out Bps"
+  source: sensor.wan1_out_octets
+  unit_time: s
+  time_window: "00:01:00"
+
+- platform: derivative
+  name: "WAN2 In Bps"
+  source: sensor.wan2_in_octets
+  unit_time: s
+  time_window: "00:01:00"
+
+- platform: derivative
+  name: "WAN2 Out Bps"
+  source: sensor.wan2_out_octets
+  unit_time: s
+  time_window: "00:01:00"
+
+# ===== System Monitor (Pi host) =====
+- platform: systemmonitor
+  resources:
+    - type: processor_use
+    - type: memory_use_percent
+    - type: disk_use_percent
+      arg: /
+    - type: load_1m
+    - type: load_5m
+    - type: load_15m
+    - type: last_boot
+    - type: network_in
+      arg: eth0
+    - type: network_out
+      arg: eth0
