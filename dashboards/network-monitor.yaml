@@ -156,6 +156,15 @@ views:
       # ===== Pi Health Section =====
       - type: grid
         cards:
+        - type: entities
+          title: Pi Health
+          entities:
+              - sensor.system_monitor_processor_temperature
+              - sensor.system_monitor_pwmfan_fan_speed
+              - sensor.system_monitor_load_1_min
+              - sensor.system_monitor_load_5_min
+              - sensor.system_monitor_load_15_min
+              - sensor.system_monitor_last_boot
           - type: gauge
             name: CPU
             entity: sensor.system_monitor_processor_use
@@ -171,16 +180,6 @@ views:
             entity: sensor.system_monitor_disk_usage
             min: 0
             max: 100
-          - type: entities
-            title: Pi Health
-            entities:
-              - sensor.system_monitor_processor_use
-              - sensor.system_monitor_load_1_min
-              - sensor.system_monitor_load_5_min
-              - sensor.system_monitor_load_15_min
-              - sensor.system_monitor_memory_usage
-              - sensor.system_monitor_disk_usage
-              - sensor.system_monitor_last_boot
           - type: custom:mini-graph-card
             name: CPU / Memory (6h)
             hours_to_show: 6
