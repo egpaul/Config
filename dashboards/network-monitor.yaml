@@ -1,0 +1,205 @@
+title: Network Monitor
+views:
+  - title: Network Monitor
+    path: overview
+    icon: mdi:monitor-dashboard
+    type: sections
+    max_columns: 4
+    dense_section_placement: true
+    sections:
+      # ===== Header Section =====
+      - type: grid
+        cards:
+          - type: custom:mushroom-title-card
+            title: Network Operations Center
+            subtitle: WAN Status • Traffic • UniFi • Pi Health
+          - type: custom:mushroom-chips-card
+            chips:
+              - type: entity
+                entity: binary_sensor.internet_reachable_1_1_1_1
+                name: Internet
+              - type: entity
+                entity: binary_sensor.failover_active
+                name: Failover
+              - type: entity
+                entity: sensor.speedtest_ping
+                name: Ping
+              - type: entity
+                entity: sensor.speedtest_download
+                name: Down
+              - type: entity
+                entity: sensor.speedtest_upload
+                name: Up
+          - type: custom:mushroom-chips-card
+            chips:
+              - type: template
+                icon: mdi:wan
+                content: >-
+                  WAN1 {{ states('sensor.wan1_down_mbps') }} / {{
+                  states('sensor.wan1_up_mbps') }} Mbps
+                entity: binary_sensor.wan1_up
+              - type: template
+                icon: mdi:wan
+                content: >-
+                  WAN2 {{ states('sensor.wan2_down_mbps') }} / {{
+                  states('sensor.wan2_up_mbps') }} Mbps
+                entity: binary_sensor.wan2_up
+          - type: conditional
+            conditions:
+              - entity: binary_sensor.internet_reachable_1_1_1_1
+                state: "off"
+            card:
+              type: markdown
+              content: |
+                ## Internet Unreachable
+                - Check WAN1/WAN2 status
+                - Check failover status
+                - Run speedtest after connectivity returns
+
+      # ===== WAN Status Section =====
+      - type: grid
+        cards:
+          - type: entities
+            title: WAN Status
+            entities:
+              - binary_sensor.wan1_up
+              - binary_sensor.wan2_up
+              - binary_sensor.failover_active
+          - type: custom:button-card
+            name: Run Speedtest
+            icon: mdi:speedometer
+            tap_action:
+              action: call-service
+              service: homeassistant.update_entity
+              service_data:
+                entity_id:
+                  - sensor.speedtest_download
+                  - sensor.speedtest_upload
+                  - sensor.speedtest_ping
+          - type: custom:mini-graph-card
+            name: WAN1 Throughput (Mbps)
+            hours_to_show: 6
+            points_per_hour: 60
+            entities:
+              - entity: sensor.wan1_down_mbps
+                name: Down
+              - entity: sensor.wan1_up_mbps
+                name: Up
+          - type: custom:mini-graph-card
+            name: WAN2 Throughput (Mbps)
+            hours_to_show: 6
+            points_per_hour: 60
+            entities:
+              - entity: sensor.wan2_down_mbps
+                name: Down
+              - entity: sensor.wan2_up_mbps
+                name: Up
+          - type: custom:apexcharts-card
+            header:
+              show: true
+              title: WAN Throughput (30m)
+              show_states: true
+            graph_span: 30m
+            update_interval: 5s
+            series:
+              - entity: sensor.wan1_down_mbps
+                name: WAN1 Down
+                type: line
+              - entity: sensor.wan1_up_mbps
+                name: WAN1 Up
+                type: line
+              - entity: sensor.wan2_down_mbps
+                name: WAN2 Down
+                type: line
+              - entity: sensor.wan2_up_mbps
+                name: WAN2 Up
+                type: line
+
+      # ===== UniFi Section =====
+      - type: grid
+        cards:
+          - type: entities
+            title: UniFi Summary
+            entities:
+              - sensor.unifi_clients
+              - sensor.unifi_devices
+          - type: custom:auto-entities
+            card:
+              type: entities
+              title: Top Talkers (RX/TX)
+              show_header_toggle: false
+            filter:
+              include:
+                - entity_id: sensor.*rx_*
+                - entity_id: sensor.*tx_*
+              exclude:
+                - entity_id: "*octets*"
+            sort:
+              method: state
+              numeric: true
+              reverse: true
+            show_empty: false
+          - type: custom:auto-entities
+            card:
+              type: entities
+              title: Hot Switch Ports
+              show_header_toggle: false
+            filter:
+              include:
+                - entity_id: sensor.*port*bandwidth*
+            sort:
+              method: state
+              numeric: true
+              reverse: true
+            show_empty: false
+
+      # ===== Pi Health Section =====
+      - type: grid
+        cards:
+          - type: gauge
+            name: CPU
+            entity: sensor.processor_use
+            min: 0
+            max: 100
+          - type: gauge
+            name: Memory
+            entity: sensor.memory_use_percent
+            min: 0
+            max: 100
+          - type: gauge
+            name: Disk
+            entity: sensor.disk_use_percent
+            min: 0
+            max: 100
+          - type: entities
+            title: Pi Health
+            entities:
+              - sensor.processor_use
+              - sensor.load_1m
+              - sensor.load_5m
+              - sensor.load_15m
+              - sensor.memory_use_percent
+              - sensor.disk_use_percent
+              - sensor.last_boot
+          - type: custom:mini-graph-card
+            name: CPU / Memory (6h)
+            hours_to_show: 6
+            points_per_hour: 60
+            entities:
+              - sensor.processor_use
+              - sensor.memory_use_percent
+          - type: custom:mini-graph-card
+            name: Disk Usage (24h)
+            hours_to_show: 24
+            points_per_hour: 30
+            entities:
+              - sensor.disk_use_percent
+          - type: conditional
+            conditions:
+              - entity: binary_sensor.rpi_power_under_voltage
+                state: "on"
+            card:
+              type: markdown
+              content: |
+                ## Pi Undervoltage Detected
+                Consider a higher-quality power supply or cable.
