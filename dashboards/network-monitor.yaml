@@ -156,9 +156,9 @@ views:
       # ===== Pi Health Section =====
       - type: grid
         cards:
-        - type: entities
-          title: Pi Health
-          entities:
+          - type: entities
+            title: Pi Health
+            entities:
               - sensor.system_monitor_processor_temperature
               - sensor.system_monitor_pwmfan_fan_speed
               - sensor.system_monitor_load_1_min
