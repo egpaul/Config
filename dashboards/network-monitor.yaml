@@ -158,42 +158,42 @@ views:
         cards:
           - type: gauge
             name: CPU
-            entity: sensor.processor_use
+            entity: sensor.system_monitor_processor_use
             min: 0
             max: 100
           - type: gauge
             name: Memory
-            entity: sensor.memory_use_percent
+            entity: sensor.system_monitor_memory_usage
             min: 0
             max: 100
           - type: gauge
             name: Disk
-            entity: sensor.disk_use_percent
+            entity: sensor.system_monitor_disk_usage
             min: 0
             max: 100
           - type: entities
             title: Pi Health
             entities:
-              - sensor.processor_use
-              - sensor.load_1m
-              - sensor.load_5m
-              - sensor.load_15m
-              - sensor.memory_use_percent
-              - sensor.disk_use_percent
-              - sensor.last_boot
+              - sensor.system_monitor_processor_use
+              - sensor.system_monitor_load_1_min
+              - sensor.system_monitor_load_5_min
+              - sensor.system_monitor_load_15_min
+              - sensor.system_monitor_memory_usage
+              - sensor.system_monitor_disk_usage
+              - sensor.system_monitor_last_boot
           - type: custom:mini-graph-card
             name: CPU / Memory (6h)
             hours_to_show: 6
             points_per_hour: 60
             entities:
-              - sensor.processor_use
-              - sensor.memory_use_percent
+              - sensor.system_monitor_processor_use
+              - sensor.system_monitor_disk_usage
           - type: custom:mini-graph-card
             name: Disk Usage (24h)
             hours_to_show: 24
             points_per_hour: 30
             entities:
-              - sensor.disk_use_percent
+              - sensor.system_monitor_disk_usage
           - type: conditional
             conditions:
               - entity: binary_sensor.rpi_power_under_voltage
