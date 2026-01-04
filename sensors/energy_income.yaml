@@ -1,0 +1,53 @@
+# Energy Income Sensors
+# These sensors calculate the income from selling energy back to the grid
+#
+# CONFIGURATION REQUIRED:
+# 1. Replace 'sensor.grid_export_energy' with your actual grid export sensor
+#    Common sensors include:
+#    - sensor.grid_export_energy (generic energy meters)
+#    - sensor.solar_exported_power (solar inverters)
+#    - sensor.powerwall_solar_export (Tesla Powerwall)
+#    - sensor.envoy_grid_export (Enphase)
+#
+# 2. Adjust the 'energy_export_rate' to your utility's buy-back rate (per kWh)
+
+- platform: template
+  sensors:
+    # Input number for configurable export rate ($/kWh)
+    # This will be created as an input_number in configuration.yaml
+
+    # Total income from energy export (all-time)
+    energy_export_income_total:
+      friendly_name: "Total Energy Export Income"
+      unique_id: energy_export_income_total
+      unit_of_measurement: "$"
+      device_class: monetary
+      icon_template: mdi:cash-multiple
+      value_template: >-
+        {% set energy = states('sensor.grid_export_energy') | float(0) %}
+        {% set rate = states('input_number.energy_export_rate') | float(0.08) %}
+        {{ (energy * rate) | round(2) }}
+
+    # Today's export energy (requires utility meter)
+    energy_export_income_today:
+      friendly_name: "Today's Energy Export Income"
+      unique_id: energy_export_income_today
+      unit_of_measurement: "$"
+      device_class: monetary
+      icon_template: mdi:cash
+      value_template: >-
+        {% set energy = states('sensor.grid_export_energy_daily') | float(0) %}
+        {% set rate = states('input_number.energy_export_rate') | float(0.08) %}
+        {{ (energy * rate) | round(2) }}
+
+    # This month's export income (requires utility meter)
+    energy_export_income_monthly:
+      friendly_name: "Monthly Energy Export Income"
+      unique_id: energy_export_income_monthly
+      unit_of_measurement: "$"
+      device_class: monetary
+      icon_template: mdi:cash-check
+      value_template: >-
+        {% set energy = states('sensor.grid_export_energy_monthly') | float(0) %}
+        {% set rate = states('input_number.energy_export_rate') | float(0.08) %}
+        {{ (energy * rate) | round(2) }}

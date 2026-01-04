@@ -1,0 +1,68 @@
+# Home Assistant Configuration
+# Main configuration file
+
+homeassistant:
+  name: Home
+  unit_system: metric
+  currency: USD
+  # Customize these settings for your location
+  # latitude: !secret latitude
+  # longitude: !secret longitude
+  # elevation: !secret elevation
+  # time_zone: !secret time_zone
+
+# Default configuration
+default_config:
+
+# Text to speech
+tts:
+  - platform: google_translate
+
+# Frontend themes
+frontend:
+  themes: !include_dir_merge_named themes/
+
+# Include files
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+# Sensor configurations
+sensor: !include_dir_merge_list sensors/
+
+# Utility meters for energy tracking
+utility_meter: !include utility_meters.yaml
+
+# Input numbers for configurable values
+input_number:
+  energy_export_rate:
+    name: "Energy Export Rate"
+    icon: mdi:currency-usd
+    min: 0
+    max: 1
+    step: 0.01
+    unit_of_measurement: "$/kWh"
+    mode: box
+    # Default rate - adjust to your utility's buy-back rate
+    initial: 0.08
+
+# Logger configuration for debugging
+logger:
+  default: warning
+  logs:
+    homeassistant.components.sensor: info
+    homeassistant.components.utility_meter: info
+
+# Recorder configuration for history
+recorder:
+  purge_keep_days: 30
+  include:
+    entities:
+      - sensor.energy_export_income_total
+      - sensor.energy_export_income_today
+      - sensor.energy_export_income_monthly
+      - sensor.grid_export_energy_daily
+      - sensor.grid_export_energy_weekly
+      - sensor.grid_export_energy_monthly
+      - sensor.grid_export_energy_yearly
+      - input_number.energy_export_rate

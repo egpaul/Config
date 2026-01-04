@@ -15,6 +15,26 @@ This repository contains the Home Assistant configuration files.
 
 ## Features
 
+### Energy Export Income Tracking
+
+Track and visualize income from selling solar energy back to the grid:
+
+**Configuration:**
+1. Update `sensor.grid_export_energy` in `sensors/energy_income.yaml` and `utility_meters.yaml` to match your actual grid export sensor
+2. Set your utility's buy-back rate via the `input_number.energy_export_rate` entity (default: $0.08/kWh)
+
+**Sensors included:**
+- `sensor.energy_export_income_total` - All-time income from energy export
+- `sensor.energy_export_income_today` - Today's income
+- `sensor.energy_export_income_monthly` - This month's income
+
+**Dashboard cards:**
+See `lovelace/energy_income_card.yaml` for multiple card options:
+- Statistics Graph Card (built-in)
+- History Graph Card (built-in)
+- ApexCharts Card (requires HACS)
+- Complete dashboard view with summary cards
+
 ### Network Device Tracking
 
 Uses SNMP to track devices on the network:

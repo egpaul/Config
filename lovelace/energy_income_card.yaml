@@ -1,0 +1,208 @@
+# Energy Income Graph Card
+# Copy this configuration into your Lovelace dashboard
+#
+# This file contains multiple card options - choose the one that fits your needs:
+# 1. Statistics Graph Card (built-in, no extra installation required)
+# 2. ApexCharts Card (requires HACS installation for advanced features)
+# 3. Complete Dashboard View with multiple cards
+
+# ==============================================================================
+# OPTION 1: Statistics Graph Card (Built-in)
+# ==============================================================================
+# Simple and clean, works out of the box
+
+statistics_graph_card:
+  type: statistics-graph
+  title: "Energy Export Income"
+  entities:
+    - entity: sensor.energy_export_income_total
+      name: "Total Income"
+  stat_types:
+    - state
+    - change
+  period:
+    calendar:
+      period: day
+  days_to_show: 30
+
+# Daily income graph
+statistics_graph_daily:
+  type: statistics-graph
+  title: "Daily Energy Income"
+  entities:
+    - entity: sensor.energy_export_income_today
+      name: "Daily Income"
+  stat_types:
+    - state
+    - max
+    - mean
+  period:
+    calendar:
+      period: day
+  days_to_show: 14
+
+# ==============================================================================
+# OPTION 2: History Graph Card (Built-in)
+# ==============================================================================
+# Shows historical data with line graph
+
+history_graph_card:
+  type: history-graph
+  title: "Energy Income History"
+  entities:
+    - entity: sensor.energy_export_income_total
+      name: "Total Income"
+    - entity: sensor.energy_export_income_today
+      name: "Today's Income"
+  hours_to_show: 168  # 7 days
+  refresh_interval: 60
+
+# ==============================================================================
+# OPTION 3: ApexCharts Card (Requires HACS)
+# ==============================================================================
+# Advanced charting with more customization options
+# Install via HACS: https://github.com/RomRider/apexcharts-card
+
+apexcharts_income_graph:
+  type: custom:apexcharts-card
+  header:
+    show: true
+    title: "Energy Export Income"
+    show_states: true
+    colorize_states: true
+  graph_span: 30d
+  span:
+    end: day
+  yaxis:
+    - id: income
+      min: 0
+      apex_config:
+        tickAmount: 5
+        labels:
+          formatter: |
+            EVAL:function(val) {
+              return '$' + val.toFixed(2);
+            }
+  series:
+    - entity: sensor.energy_export_income_total
+      name: "Total Income"
+      type: area
+      color: "#4CAF50"
+      yaxis_id: income
+      group_by:
+        func: last
+        duration: 1d
+      show:
+        legend_value: true
+        in_header: true
+      stroke_width: 2
+      opacity: 0.3
+
+apexcharts_daily_bar:
+  type: custom:apexcharts-card
+  header:
+    show: true
+    title: "Daily Energy Income"
+    show_states: true
+    colorize_states: true
+  graph_span: 14d
+  span:
+    end: day
+  yaxis:
+    - id: income
+      min: 0
+      apex_config:
+        labels:
+          formatter: |
+            EVAL:function(val) {
+              return '$' + val.toFixed(2);
+            }
+  series:
+    - entity: sensor.energy_export_income_today
+      name: "Daily Income"
+      type: column
+      color: "#2196F3"
+      yaxis_id: income
+      group_by:
+        func: max
+        duration: 1d
+      show:
+        legend_value: true
+        in_header: true
+
+# ==============================================================================
+# OPTION 4: Complete Dashboard View
+# ==============================================================================
+# A complete view with summary cards and graphs
+
+complete_energy_income_view:
+  title: "Energy Income"
+  path: energy-income
+  icon: mdi:cash-multiple
+  cards:
+    # Summary Cards Row
+    - type: horizontal-stack
+      cards:
+        - type: entity
+          entity: sensor.energy_export_income_today
+          name: "Today"
+          icon: mdi:cash
+        - type: entity
+          entity: sensor.energy_export_income_monthly
+          name: "This Month"
+          icon: mdi:cash-check
+        - type: entity
+          entity: sensor.energy_export_income_total
+          name: "All Time"
+          icon: mdi:cash-multiple
+
+    # Export Rate Configuration
+    - type: entities
+      title: "Settings"
+      entities:
+        - entity: input_number.energy_export_rate
+          name: "Export Rate ($/kWh)"
+          icon: mdi:currency-usd
+
+    # Main Graph
+    - type: statistics-graph
+      title: "Income Over Time"
+      entities:
+        - entity: sensor.energy_export_income_total
+          name: "Cumulative Income"
+      stat_types:
+        - state
+        - change
+      period:
+        calendar:
+          period: day
+      days_to_show: 30
+
+    # Daily Breakdown
+    - type: statistics-graph
+      title: "Daily Income Breakdown"
+      entities:
+        - entity: sensor.energy_export_income_today
+          name: "Daily Income"
+      stat_types:
+        - state
+        - max
+      period:
+        calendar:
+          period: day
+      days_to_show: 14
+
+    # Energy Export Statistics
+    - type: statistics-graph
+      title: "Energy Exported (kWh)"
+      entities:
+        - entity: sensor.grid_export_energy_daily
+          name: "Daily Export"
+        - entity: sensor.grid_export_energy_monthly
+          name: "Monthly Export"
+      stat_types:
+        - state
+      period:
+        calendar:
+          period: day
+      days_to_show: 30

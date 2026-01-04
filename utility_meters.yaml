@@ -1,0 +1,33 @@
+# Utility Meters for Energy Export Tracking
+# These meters track energy export over different time periods
+#
+# CONFIGURATION REQUIRED:
+# Replace 'sensor.grid_export_energy' with your actual grid export sensor
+
+# Daily energy export meter - resets at midnight
+grid_export_energy_daily:
+  source: sensor.grid_export_energy
+  name: "Grid Export Energy Daily"
+  cycle: daily
+  unique_id: grid_export_energy_daily
+
+# Weekly energy export meter - resets on Monday
+grid_export_energy_weekly:
+  source: sensor.grid_export_energy
+  name: "Grid Export Energy Weekly"
+  cycle: weekly
+  unique_id: grid_export_energy_weekly
+
+# Monthly energy export meter - resets on the 1st
+grid_export_energy_monthly:
+  source: sensor.grid_export_energy
+  name: "Grid Export Energy Monthly"
+  cycle: monthly
+  unique_id: grid_export_energy_monthly
+
+# Yearly energy export meter - resets on January 1st
+grid_export_energy_yearly:
+  source: sensor.grid_export_energy
+  name: "Grid Export Energy Yearly"
+  cycle: yearly
+  unique_id: grid_export_energy_yearly
